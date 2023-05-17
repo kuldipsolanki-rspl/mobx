@@ -14,7 +14,7 @@ import { observer } from "mobx-react-lite";
 
 const Component_Header = () => {
   const {
-    rootStore: { userStore },
+    rootStore: { userStore, loginStore },
   } = useStore();
   // get urlPath name
   const location = useLocation();
@@ -45,7 +45,8 @@ const Component_Header = () => {
     var tokenData = ls?.get("refreshtoken");
 
     const tokenString: any = { token: tokenData?.data };
-    dispatch(refreshToken(tokenString));
+    // dispatch(refreshToken(tokenString));
+    loginStore.fetchreffreshToken(tokenString);
   };
 
   const data: any = { search: decoded?.email };

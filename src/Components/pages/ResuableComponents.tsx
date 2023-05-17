@@ -16,7 +16,13 @@ import { AppDispatch } from "../../redux/store";
 import ComponentHeader from "./Component_Header";
 import ComponentFooter from "./Component_Footer";
 import ComponentNavbar from "./componentNavbar";
+import { useStore } from "../../hooks/useStore";
+import { observer } from "mobx-react";
 function ResuableComponents() {
+  const {
+    rootStore: { techSearchstore },
+  } = useStore();
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -45,11 +51,12 @@ function ResuableComponents() {
       setSearchbarErr(searchbarErrr);
     } else {
       navigate(`/Search_list/${searchWord}`);
-      dispatch(userSearchGetData(searchWord));
-      dispatch(searchFilterPost(dataObj));
+      // dispatch((searchWord));
+      techSearchstore.fetchtechStackList(searchWord);
+      // dispatch(searchFilterPost(dataObj));
+      techSearchstore.fetchseacrchFilterpost(dataObj);
     }
   };
-
 
   useEffect(() => {
     document.body.className = "app bg-light";
@@ -360,4 +367,4 @@ function ResuableComponents() {
   );
 }
 
-export default ResuableComponents;
+export default observer(ResuableComponents);

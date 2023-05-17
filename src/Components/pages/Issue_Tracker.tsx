@@ -16,8 +16,14 @@ import AssignedIssues from "./IssueTracker/AssignedIssues";
 import ReportedIssues from "./IssueTracker/ReportedIssues";
 import { Permissions } from "../../constants/PermissionConstant";
 import { roleName, userPermission } from "./auth/authUser";
+import { observer } from "mobx-react-lite";
+import { useStore } from "../../hooks/useStore";
 
 function Issue_Tracker() {
+  const {
+    rootStore: { issueTrackerStore },
+  } = useStore();
+
   const dispatch = useDispatch<AppDispatch>();
   const { allIssues } = useSelector((state: any) => state?.allIssues);
   const { reportedIssues } = useSelector((state: any) => state?.reportedIssues);
@@ -54,10 +60,15 @@ function Issue_Tracker() {
 
   useEffect(() => {
     //sssssssss document.body.className = "app nav-light d-flex flex-column h-100";
-    dispatch(allIssuesList());
-    dispatch(reportedIssuesList());
-    dispatch(assignedIssuesList());
-    dispatch(ReviewersList());
+    // dispatch(allIssuesList());
+    issueTrackerStore.fetchAllIssues();
+    // dispatch(reportedIssuesList());
+    issueTrackerStore.fetchReportedIssues();
+    // dispatch(assignedIssuesList());
+    issueTrackerStore.fetchAssignedIssues();
+    // dispatch(ReviewersList());
+    issueTrackerStore.fetchReviewersList();
+
     if (allowViewAllPermission.length === 0) {
       setReported(true);
     }
@@ -174,4 +185,4 @@ function Issue_Tracker() {
   );
 }
 
-export default Issue_Tracker;
+export default observer(Issue_Tracker);

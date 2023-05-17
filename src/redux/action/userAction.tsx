@@ -189,7 +189,7 @@ export const RecentlyAdded = () => async (dispatch: any) => {
     console.error(error);
   }
 };
-// trending component In Home Page
+//remaining // trending component In Home Page
 export const TrendingData = () => async (dispatch: any) => {
   try {
     dispatch({ type: TRENDINGDATA_REQUEST });
@@ -226,13 +226,13 @@ export const searchFilterPost = (dataObj: any) => async (dispatch: any) => {
   }
 };
 
-// view component get data api for user
+//remaining// view component get data api for user
 // search data from reuseable compo. page searchbar in USER
 export const userViewComponent = (id: any) => async (dispatch: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       dispatch({ type: VIEW_COMPONENT_GET_REQUEST });
-      const getData: any = await fetchFunction(`api/component/view?id=${id}`);
+      const getData: any = await fetchFunction(``);
       dispatch({ type: VIEW_COMPONENT_GET_SUCCESS, payload: getData });
       return resolve(getData);
     } catch (error) {
@@ -329,7 +329,7 @@ export const techStackList = () => async (dispatch: any) => {
   });
 };
 
-//  downloadCount
+//remaing//  downloadCount
 export const downloadCount = (dataObj: any) => async (dispatch: any) => {
   try {
     dispatch({ type: DOWNLOADS_REQUEST });
@@ -354,7 +354,7 @@ export const favouritesList = () => async (dispatch: any) => {
   }
 };
 
-// user favourites search result list GET Api
+//remaining// user favourites search result list GET Api
 export const favouriteSearchList =
   (searchWord: any) => async (dispatch: any) => {
     try {
@@ -432,7 +432,7 @@ export const pendingItems = () => async (dispatch: any) => {
   }
 };
 
-// Discover Your Interest result list GET Api
+//remaining// Discover Your Interest result list GET Api
 export const discoverMyInterests = () => async (dispatch: any) => {
   try {
     dispatch({ type: DISCOVERMYINTERESTS_REQUEST });
@@ -445,7 +445,7 @@ export const discoverMyInterests = () => async (dispatch: any) => {
   }
 };
 
-// MyInterestsAdd Post Api
+//remaining// MyInterestsAdd Post Api
 export const MyInterestsAdd = (techStackId: any) => async (dispatch: any) => {
   try {
     dispatch({ type: MYINTERESTSADD_REQUEST });
@@ -458,7 +458,7 @@ export const MyInterestsAdd = (techStackId: any) => async (dispatch: any) => {
   }
 };
 
-// changelogs data in view component GET Api
+//remaining// changelogs data in view component GET Api
 export const changelogsData = (compId: any) => async (dispatch: any) => {
   try {
     dispatch({ type: CHANGELOGS_DATA_REQUEST });
@@ -473,7 +473,7 @@ export const changelogsData = (compId: any) => async (dispatch: any) => {
   }
 };
 
-// view dependencies in view component GET Api
+//remaining// view dependencies in view component GET Api
 export const viewDependencies = (compId: any) => async (dispatch: any) => {
   try {
     dispatch({ type: VIEW_DEPENDENCIES_REQUEST });
@@ -486,7 +486,7 @@ export const viewDependencies = (compId: any) => async (dispatch: any) => {
   }
 };
 
-// Raise an issue submit Post Api
+//remaining// Raise an issue submit Post Api
 export const raiseIssueSubmit =
   (id: any, formData: any) => async (dispatch: any) => {
     try {
@@ -498,7 +498,7 @@ export const raiseIssueSubmit =
     }
   };
 
-// edit Reported issue patch Api
+//remaining// edit Reported issue patch Api
 export const editReportedIssue =
   (id: any, formData: any) => async (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
@@ -547,7 +547,7 @@ export const assignedIssuesList = () => async (dispatch: any) => {
   }
 };
 
-// VIew Particular GET Api
+//remaining // VIew Particular GET Api
 export const viewIssue = (compId: any) => async (dispatch: any) => {
   try {
     dispatch({ type: VIEW_ISSUE_REQUEST });
@@ -558,7 +558,7 @@ export const viewIssue = (compId: any) => async (dispatch: any) => {
   }
 };
 
-// view review comment in view component
+//remaining // view review comment in view component
 export const AllReviewComments =
   (compId: any, rating: any, sortBy: any) => async (dispatch: any) => {
     try {
@@ -574,7 +574,7 @@ export const AllReviewComments =
     }
   };
 
-// Add review comment in view component
+//remaining // Add review comment in view component
 export const AddReviewComments = (reviewData: any) => async (dispatch: any) => {
   try {
     dispatch({ type: ADDREVIEW_REQUEST });
@@ -587,7 +587,7 @@ export const AddReviewComments = (reviewData: any) => async (dispatch: any) => {
   }
 };
 
-// Add review comment in view component
+//remaining// Add review comment in view component
 export const AddReply = (replyData: any) => async (dispatch: any) => {
   try {
     dispatch({ type: ADDREPLY_REQUEST });
@@ -600,7 +600,7 @@ export const AddReply = (replyData: any) => async (dispatch: any) => {
   }
 };
 
-// Add review comment in view component
+//remaining// Add review comment in view component
 export const EditReply = (dataObj: any) => async (dispatch: any) => {
   try {
     dispatch({ type: EDITREPLY_REQUEST });
@@ -613,7 +613,7 @@ export const EditReply = (dataObj: any) => async (dispatch: any) => {
   }
 };
 
-// Delete review comment in view component
+//remaining // Delete review comment in view component
 export const DeleteReply = (id: any) => async (dispatch: any) => {
   try {
     dispatch({ type: DElETEREPLY_REQUEST });
@@ -626,7 +626,7 @@ export const DeleteReply = (id: any) => async (dispatch: any) => {
   }
 };
 
-// CategoryList
+//remaining // CategoryList
 export const CategoryListFun = () => async (dispatch: any) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -641,7 +641,7 @@ export const CategoryListFun = () => async (dispatch: any) => {
   });
 };
 
-// CategoryList
+//remaining // CategoryList
 export const SubCategoryListFun = (id: any) => async (dispatch: any) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -673,7 +673,7 @@ export const ReviewersList = () => async (dispatch: any) => {
   });
 };
 
-// Cancel Issue
+//remaining // Cancel Issue
 export const cancelIssue = (id: Number) => async (dispatch: any) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -688,7 +688,7 @@ export const cancelIssue = (id: Number) => async (dispatch: any) => {
   });
 };
 
-// Edit Comment
+//remaining  // Edit Comment
 export const editComment =
   (id: any, formData: any) => async (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
@@ -704,7 +704,7 @@ export const editComment =
     });
   };
 
-// Delete Comment
+//remaining  // Delete Comment
 export const deleteComment = (id: Number) => async (dispatch: any) => {
   return new Promise(async (resolve, reject) => {
     try {
