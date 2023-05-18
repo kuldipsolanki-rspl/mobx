@@ -1,12 +1,23 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import Pagination from "../../common/Pagination";
 import { IssueTrackerData } from "../InterfaceTypes";
 import { Link } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import { useStore } from "../../../hooks/useStore";
 
 function AssignedIssues() {
-  const { assignedIssues } = useSelector((state: any) => state?.assignedIssues);
+  const {
+    rootStore: { issueTrackerStore },
+  } = useStore();
+
+  useEffect(() => {
+    issueTrackerStore.fetchAssignedIssues();
+  }, []);
+
+  // const { assignedIssues } = useSelector((state: any) => state?.assignedIssues);
+
   const [showList, setShowList] = useState([]);
   const handleShowList = (list: any) => setShowList(list);
   return (
@@ -32,10 +43,10 @@ function AssignedIssues() {
                     <th className="text-center">Action</th>
                   </tr>
                 </thead>
-                {assignedIssues?.payload?.length !== 0 &&
-                assignedIssues?.payload !== undefined ? (
+                {issueTrackerStore.assignedIssuesList?.length !== 0 &&
+                issueTrackerStore.assignedIssuesList !== undefined ? (
                   <tbody>
-                    {showList?.map((data: IssueTrackerData) => {
+                    {showList?.map((data: any) => {
                       return (
                         <tr>
                           <td>
@@ -72,10 +83,10 @@ function AssignedIssues() {
                 )}
               </table>
             </div>
-            {assignedIssues?.payload?.length !== 0 &&
-            assignedIssues?.payload?.length !== undefined ? (
+            {issueTrackerStore.assignedIssuesList?.length !== 0 &&
+            issueTrackerStore.assignedIssuesList?.length !== undefined ? (
               <Pagination
-                data={assignedIssues?.payload}
+                data={issueTrackerStore.assignedIssuesList}
                 itemPerPage={5}
                 handleUpdate={handleShowList}
               />
@@ -87,4 +98,4 @@ function AssignedIssues() {
   );
 }
 
-export default AssignedIssues;
+export default observer(AssignedIssues);

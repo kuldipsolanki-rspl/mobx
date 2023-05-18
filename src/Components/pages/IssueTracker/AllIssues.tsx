@@ -1,14 +1,28 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import Pagination from "../../common/Pagination";
 import { IssueTrackerData } from "../InterfaceTypes";
 import { Link } from "react-router-dom";
+import { useStore } from "../../../hooks/useStore";
+import { observer } from "mobx-react-lite";
 
 function AllIssues() {
-  const { allIssues } = useSelector((state: any) => state?.allIssues);
+  const {
+    rootStore: { issueTrackerStore },
+  } = useStore();
+
+  useEffect(() => {
+    issueTrackerStore.fetchAllIssues();
+  }, []);
+
+  // const { allIssues } = useSelector((state: any) => state?.allIssues);
+
   const [showList, setShowList] = useState([]);
-  const handleShowList = (list: any) => setShowList(list);
+  const handleShowList = (list: any) => {
+    setShowList(list);
+  };
+
   return (
     <Fragment>
       <div className="tab-content" id="pills-tabContent">
@@ -32,10 +46,10 @@ function AllIssues() {
                     <th className="text-center">Action</th>
                   </tr>
                 </thead>
-                {allIssues?.payload?.data.length !== 0 &&
-                allIssues?.payload?.data !== undefined ? (
+                {issueTrackerStore.allIssuesList?.data?.length !== 0 &&
+                issueTrackerStore.allIssuesList?.data !== undefined ? (
                   <tbody>
-                    {showList?.map((data: IssueTrackerData) => {
+                    {showList?.map((data: any) => {
                       return (
                         <tr>
                           <td>
@@ -73,10 +87,10 @@ function AllIssues() {
                 )}
               </table>
             </div>
-            {allIssues?.payload?.data?.length !== 0 &&
-            allIssues?.payload?.data?.length !== undefined ? (
+            {issueTrackerStore.allIssuesList?.data?.length !== 0 &&
+            issueTrackerStore.allIssuesList?.data?.length !== undefined ? (
               <Pagination
-                data={allIssues?.payload?.data}
+                data={issueTrackerStore.allIssuesList?.data}
                 itemPerPage={5}
                 handleUpdate={handleShowList}
               />
@@ -88,4 +102,4 @@ function AllIssues() {
   );
 }
 
-export default AllIssues;
+export default observer(AllIssues);

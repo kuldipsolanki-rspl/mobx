@@ -100,13 +100,10 @@ function Edit_Manage_Components() {
     // const componentStatusCode: any = await dispatch(
     //   componentStatus(Obj, formData)
     // );
-    const componentStatusCode: any =
-      await manageComponentStore.fetchAdminEditPublishComponent(Obj, formData);
-    console.log("status", componentStatusCode?.status);
+    // const componentStatusCode: any =
+    await manageComponentStore.fetchAdminEditPublishComponent(Obj, formData);
 
-    if (componentStatusCode?.status === 200) {
-      console.log("true");
-
+    if (manageComponentStore?.adminEditPublishComponent?.status === true) {
       toast.success(flag === true ? "Data Published" : "Data Unpublished");
     }
     setTimeout(() => {

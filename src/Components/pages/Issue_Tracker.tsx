@@ -26,8 +26,8 @@ function Issue_Tracker() {
 
   const dispatch = useDispatch<AppDispatch>();
   const { allIssues } = useSelector((state: any) => state?.allIssues);
-  const { reportedIssues } = useSelector((state: any) => state?.reportedIssues);
-  const { assignedIssues } = useSelector((state: any) => state?.assignedIssues);
+  // const { reportedIssues } = useSelector((state: any) => state?.reportedIssues);
+  // const { assignedIssues } = useSelector((state: any) => state?.assignedIssues);
   const [actionIcon, setActionIcon] = useState("All");
   const [all, setAll] = useState(true);
   const [reported, setReported] = useState(false);
@@ -59,7 +59,7 @@ function Issue_Tracker() {
   };
 
   useEffect(() => {
-    //sssssssss document.body.className = "app nav-light d-flex flex-column h-100";
+    // document.body.className = "app nav-light d-flex flex-column h-100";
     // dispatch(allIssuesList());
     issueTrackerStore.fetchAllIssues();
     // dispatch(reportedIssuesList());
@@ -67,7 +67,7 @@ function Issue_Tracker() {
     // dispatch(assignedIssuesList());
     issueTrackerStore.fetchAssignedIssues();
     // dispatch(ReviewersList());
-    issueTrackerStore.fetchReviewersList();
+    // issueTrackerStore.fetchReviewersList();
 
     if (allowViewAllPermission.length === 0) {
       setReported(true);
@@ -113,8 +113,8 @@ function Issue_Tracker() {
                             onClick={handleAll}
                           >
                             All Issues (
-                            {allIssues?.payload?.data?.length
-                              ? allIssues?.payload?.data?.length
+                            {issueTrackerStore.allIssuesList?.data?.length
+                              ? issueTrackerStore.allIssuesList?.data?.length
                               : 0}
                             )
                           </button>
@@ -139,7 +139,8 @@ function Issue_Tracker() {
                           aria-selected="false"
                           onClick={handleReported}
                         >
-                          Reported by Me ({reportedIssues?.payload?.length})
+                          Reported by Me (
+                          {issueTrackerStore.reportedIssuesList?.length})
                         </button>
                       </li>
                       {AllowReviewIssue.length !== 0 ? (
@@ -155,7 +156,9 @@ function Issue_Tracker() {
                             aria-selected="false"
                             onClick={handleAssigned}
                           >
-                            Assigned to Me ({assignedIssues?.payload?.length})
+                            Assigned to Me (
+                            {issueTrackerStore.assignedIssuesList.length})
+                            {/* ({assignedIssues?.payload?.length}) */}
                           </button>
                         </li>
                       ) : (

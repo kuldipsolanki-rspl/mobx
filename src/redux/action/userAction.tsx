@@ -547,7 +547,7 @@ export const assignedIssuesList = () => async (dispatch: any) => {
   }
 };
 
-//remaining // VIew Particular GET Api
+//remaining // View Particular GET Api
 export const viewIssue = (compId: any) => async (dispatch: any) => {
   try {
     dispatch({ type: VIEW_ISSUE_REQUEST });

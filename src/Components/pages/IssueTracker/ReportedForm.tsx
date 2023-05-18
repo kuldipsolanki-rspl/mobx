@@ -18,14 +18,20 @@ import star3 from "../../../images/3star.svg";
 import { Permissions } from "../../../constants/PermissionConstant";
 import moment from "moment";
 import SecureLS from "secure-ls";
+import { useStore } from "../../../hooks/useStore";
+import { observer } from "mobx-react-lite";
 function ReportedForm() {
+  const {
+    rootStore: { issueTrackerStore },
+  } = useStore();
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const ls: any = new SecureLS();
   const fullName = ls?.get("username")?.data;
   const { viewEachIssue } = useSelector((state: any) => state?.viewEachIssue);
-  const { Reviewers } = useSelector((state: any) => state?.Reviewers);
+  // const { Reviewers } = useSelector((state: any) => state?.Reviewers);
   const [commentData, setCommentData] = useState<any>([]);
   let compId = useParams();
   const [formData, setFormData] = useState({});
@@ -41,10 +47,16 @@ function ReportedForm() {
   );
   const handlesubmit = async (e: any) => {
     e.preventDefault();
-    const issueResponse: any = await dispatch(
-      editReportedIssue(viewEachIssue?.payload?.issue?.id, formData)
+    // const issueResponse: any = await dispatch(
+    //   editReportedIssue(viewEachIssue?.payload?.issue?.id, formData)
+    // );
+
+    issueTrackerStore.fetchEditIssues(
+      issueTrackerStore.viewIssues?.issue?.id,
+      formData
     );
-    if (issueResponse?.status === 200) {
+
+    if (issueTrackerStore.editIssues?.status === true) {
       toast.success("Issue Edited Successfully");
     }
     setTimeout(() => {
@@ -53,16 +65,23 @@ function ReportedForm() {
   };
   const commentUpdate = () => {
     const data = { comment: commentData?.comment };
-    dispatch(editComment(commentData?.id, data));
+    // dispatch(editComment(commentData?.id, data));
+    issueTrackerStore.fetchEditComment(commentData?.id, data);
     setCommentData({ ...commentData, id: "", comment: "" });
-    dispatch(viewIssue(compId.id));
+    // dispatch(viewIssue(compId.id));
+    issueTrackerStore.fetchViewIssues(compId.id);
   };
 
   const handleCancel = async () => {
-    const cancelResponse: any = await dispatch(
-      cancelIssue(viewEachIssue?.payload?.issue?.id)
+    // const cancelResponse: any = await dispatch(
+    //   cancelIssue(viewEachIssue?.payload?.issue?.id)
+    // );
+
+    await issueTrackerStore.fetchCancelIssues(
+      issueTrackerStore.viewIssues?.issue?.id
     );
-    if (cancelResponse?.status === 200) {
+
+    if (issueTrackerStore.cancelIssues?.status === true) {
       toast.success("Issue Canceled !!!");
     }
     setTimeout(() => {
@@ -71,10 +90,13 @@ function ReportedForm() {
   };
 
   const deleteComments = async (id: Number) => {
-    const deleteComm: any = await dispatch(deleteComment(id));
-    if (deleteComm?.status === 200) {
-      toast.success("Comment Deleted !!!");
-      dispatch(viewIssue(compId.id));
+    // const deleteComm: any = await dispatch(deleteComment(id));
+    await issueTrackerStore.fetchDeleteComment(id);
+
+    if (issueTrackerStore.deleteComment?.status === true) {
+      toast.success(issueTrackerStore.deleteComment?.message);
+      // dispatch(viewIssue(compId.id));
+      issueTrackerStore.fetchViewIssues(compId.id);
     }
   };
 
@@ -92,7 +114,10 @@ function ReportedForm() {
 
   useEffect(() => {
     document.body.className = "app bg-light";
-    dispatch(viewIssue(compId.id));
+    // dispatch(viewIssue(compId.id));
+
+    issueTrackerStore.fetchViewIssues(compId.id);
+    issueTrackerStore.fetchReviewersList();
   }, [dispatch, compId.id, commentData?.id]);
   return (
     <Fragment>
@@ -559,7 +584,7 @@ function ReportedForm() {
                                                         >
                                                           Select Name
                                                         </option>
-                                                        {Reviewers?.payload?.map(
+                                                        {issueTrackerStore.reviewersList?.map(
                                                           (data: any) => {
                                                             return (
                                                               <option
@@ -682,4 +707,4 @@ function ReportedForm() {
   );
 }
 
-export default ReportedForm;
+export default observer(ReportedForm);

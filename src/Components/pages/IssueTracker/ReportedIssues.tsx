@@ -1,17 +1,30 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import Pagination from "../../common/Pagination";
 import { IssueTrackerData } from "../InterfaceTypes";
 import { Link } from "react-router-dom";
 import SecureLS from "secure-ls";
+import { useStore } from "../../../hooks/useStore";
+import { observer } from "mobx-react-lite";
 
 function ReportedIssues() {
-  const { reportedIssues } = useSelector((state: any) => state?.reportedIssues);
+  const {
+    rootStore: { issueTrackerStore },
+  } = useStore();
+
+  useEffect(() => {
+    issueTrackerStore.fetchReportedIssues();
+    console.log(issueTrackerStore.reportedIssuesList);
+  }, []);
+
+  // const { reportedIssues } = useSelector((state: any) => state?.reportedIssues);
+
   const [showList, setShowList] = useState([]);
   const handleShowList = (list: any) => setShowList(list);
   const ls: any = new SecureLS();
   const fullName = ls?.get("username")?.data;
+
   return (
     <Fragment>
       <div className="tab-content" id="pills-tabContent">
@@ -35,10 +48,10 @@ function ReportedIssues() {
                     <th className="text-center">Action</th>
                   </tr>
                 </thead>
-                {reportedIssues?.payload?.length !== 0 &&
-                reportedIssues?.payload !== undefined ? (
+                {issueTrackerStore.reportedIssuesList?.length !== 0 &&
+                issueTrackerStore.reportedIssuesList !== undefined ? (
                   <tbody>
-                    {showList?.map((data: IssueTrackerData) => {
+                    {showList?.map((data: any) => {
                       return (
                         <tr>
                           <td>
@@ -76,10 +89,10 @@ function ReportedIssues() {
                 )}
               </table>
             </div>
-            {reportedIssues?.payload?.length !== 0 &&
-            reportedIssues?.payload?.length !== undefined ? (
+            {issueTrackerStore.reportedIssuesList?.length !== 0 &&
+            issueTrackerStore.reportedIssuesList?.length !== undefined ? (
               <Pagination
-                data={reportedIssues?.payload}
+                data={issueTrackerStore.reportedIssuesList}
                 itemPerPage={5}
                 handleUpdate={handleShowList}
               />
@@ -91,4 +104,4 @@ function ReportedIssues() {
   );
 }
 
-export default ReportedIssues;
+export default observer(ReportedIssues);

@@ -18,7 +18,13 @@ import moment from "moment";
 import { Permissions } from "../../../constants/PermissionConstant";
 import { userPermission } from "../auth/authUser";
 import SecureLS from "secure-ls";
+import { observer } from "mobx-react-lite";
+import { useStore } from "../../../hooks/useStore";
 function AssignedForm() {
+  const {
+    rootStore: { issueTrackerStore },
+  } = useStore();
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { viewEachIssue } = useSelector((state: any) => state?.viewEachIssue);
@@ -46,10 +52,14 @@ function AssignedForm() {
   );
   const handlesubmit = async (e: any) => {
     e.preventDefault();
-    const issueResponse: any = await dispatch(
-      editReportedIssue(viewEachIssue?.payload?.issue?.id, formData)
+    // const issueResponse: any = await dispatch(
+    //   editReportedIssue(viewEachIssue?.payload?.issue?.id, formData)
+    // );
+    issueTrackerStore.fetchEditIssues(
+      issueTrackerStore.viewIssues?.issue?.id,
+      formData
     );
-    if (issueResponse?.status === 200) {
+    if (issueTrackerStore.editIssues?.status === true) {
       toast.success("Issue Edited Successfully");
     }
     setTimeout(() => {
@@ -58,10 +68,13 @@ function AssignedForm() {
   };
 
   const handleCancel = async () => {
-    const cancelResponse: any = await dispatch(
-      cancelIssue(viewEachIssue?.payload?.issue?.id)
+    // const cancelResponse: any = await dispatch(
+    //   cancelIssue(viewEachIssue?.payload?.issue?.id)
+    // );
+    await issueTrackerStore.fetchCancelIssues(
+      issueTrackerStore.viewIssues?.issue?.id
     );
-    if (cancelResponse?.status === 200) {
+    if (issueTrackerStore.cancelIssues?.status === true) {
       toast.success("Issue Canceled !!!");
     }
     setTimeout(() => {
@@ -71,16 +84,22 @@ function AssignedForm() {
 
   const commentUpdate = () => {
     const data = { comment: commentData?.comment };
-    dispatch(editComment(commentData?.id, data));
+    // dispatch(editComment(commentData?.id, data));
+    issueTrackerStore.fetchEditComment(commentData?.id, data);
+
     setCommentData({ ...commentData, id: "", comment: "" });
-    dispatch(viewIssue(compId.id));
+    // dispatch(viewIssue(compId.id));
+    issueTrackerStore.fetchViewIssues(compId.id);
   };
 
   const deleteComments = async (id: Number) => {
-    const deleteComm: any = await dispatch(deleteComment(id));
-    if (deleteComm?.status === 200) {
-      toast.success("Comment Deleted !!!");
-      dispatch(viewIssue(compId.id));
+    // const deleteComm: any = await dispatch(deleteComment(id));
+    await issueTrackerStore.fetchDeleteComment(id);
+    if (issueTrackerStore.deleteComment?.status === true) {
+      // toast.success("Comment Deleted !!!");
+      toast.success(issueTrackerStore.deleteComment?.message);
+      // dispatch(viewIssue(compId.id));
+      issueTrackerStore.fetchViewIssues(compId.id);
     }
   };
 
@@ -99,7 +118,9 @@ function AssignedForm() {
   useEffect(() => {
     document.body.className = "app bg-light";
 
-    dispatch(viewIssue(compId.id));
+    // dispatch(viewIssue(compId.id));
+    issueTrackerStore.fetchViewIssues(compId.id);
+    issueTrackerStore.fetchReviewersList();
   }, [dispatch, compId.id, , commentData?.id]);
 
   const ls: any = new SecureLS();
@@ -560,7 +581,7 @@ function AssignedForm() {
                                                         >
                                                           Select Name
                                                         </option>
-                                                        {Reviewers?.payload?.map(
+                                                        {issueTrackerStore.reviewersList?.map(
                                                           (data: any) => {
                                                             return (
                                                               <option
@@ -680,4 +701,4 @@ function AssignedForm() {
   );
 }
 
-export default AssignedForm;
+export default observer(AssignedForm);

@@ -18,11 +18,18 @@ import {
 import { Permissions } from "../../../constants/PermissionConstant";
 import { userPermission } from "../auth/authUser";
 import SecureLS from "secure-ls";
+import { observer } from "mobx-react-lite";
+import { useStore } from "../../../hooks/useStore";
+
 function AllIssuesForm() {
+  const {
+    rootStore: { issueTrackerStore },
+  } = useStore();
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { viewEachIssue } = useSelector((state: any) => state?.viewEachIssue);
-  const { Reviewers } = useSelector((state: any) => state?.Reviewers);
+  // const { Reviewers } = useSelector((state: any) => state?.Reviewers);
 
   const ls: any = new SecureLS();
   const fullName = ls?.get("username")?.data;
@@ -32,21 +39,28 @@ function AllIssuesForm() {
 
   var statusArr = ["OPEN", "IN PROGRESS", "RESOLVED", "CLOSED"];
   let statusArray = statusArr.filter(
-    (status: string) => status !== viewEachIssue?.payload?.issue?.status
+    (status: string) => status !== issueTrackerStore.viewIssues?.issue?.status
   );
 
-  
   var priorityArr = ["HIGH", "MEDIUM", "LOW"];
   let priorityArray = priorityArr.filter(
-    (priority: string) => priority !== viewEachIssue?.payload?.issue?.priority
+    (priority: string) =>
+      priority !== issueTrackerStore.viewIssues?.issue?.priority
   );
   const [commentData, setCommentData] = useState<any>([]);
+
   const handlesubmit = async (e: any) => {
     e.preventDefault();
-    const issueResponse: any = await dispatch(
-      editReportedIssue(viewEachIssue?.payload?.issue?.id, formData)
+    // const issueResponse: any = await dispatch(
+    //   editReportedIssue(issueTrackerStore.viewIssues?.issue?.id, formData)
+    // );
+
+    issueTrackerStore.fetchEditIssues(
+      issueTrackerStore.viewIssues?.issue?.id,
+      formData
     );
-    if (issueResponse?.status === 200) {
+
+    if (issueTrackerStore.editIssues?.status === true) {
       toast.success("Issue Edited Successfully");
     }
     setTimeout(() => {
@@ -56,17 +70,23 @@ function AllIssuesForm() {
 
   const commentUpdate = () => {
     const data = { comment: commentData?.comment };
-    dispatch(editComment(commentData?.id, data));
+    // dispatch(editComment(commentData?.id, data));
+    issueTrackerStore.fetchEditComment(commentData?.id, data);
     setCommentData({ ...commentData, id: "", comment: "" });
-    dispatch(viewIssue(compId.id));
+    // dispatch(viewIssue(compId.id));
+    issueTrackerStore.fetchViewIssues(compId.id);
   };
 
   const handleCancel = async () => {
-    const cancelResponse: any = await dispatch(
-      cancelIssue(viewEachIssue?.payload?.issue?.id)
+    // const cancelResponse: any = await dispatch(
+    //   cancelIssue(issueTrackerStore.viewIssues?.issue?.id)
+    // );
+
+    await issueTrackerStore.fetchCancelIssues(
+      issueTrackerStore.viewIssues?.issue?.id
     );
 
-    if (cancelResponse?.status === 200) {
+    if (issueTrackerStore.cancelIssues?.status === true) {
       toast.success("Issue Canceled !!!");
     }
     setTimeout(() => {
@@ -75,10 +95,14 @@ function AllIssuesForm() {
   };
 
   const deleteComments = async (id: Number) => {
-    const deleteComm: any = await dispatch(deleteComment(id));
-    if (deleteComm?.status === 200) {
-      toast.success("Comment Deleted !!!");
-      dispatch(viewIssue(compId.id));
+    // const deleteComm: any = await dispatch(deleteComment(id));
+    await issueTrackerStore.fetchDeleteComment(id);
+
+    if (issueTrackerStore.deleteComment?.status === true) {
+      // toast.success("Comment Deleted !!!");
+      toast.success(issueTrackerStore.deleteComment?.message);
+      // dispatch(viewIssue(compId.id));
+      issueTrackerStore.fetchViewIssues(compId.id);
     }
   };
 
@@ -89,12 +113,19 @@ function AllIssuesForm() {
   let allowCancelPermission = userPermission().filter(
     (id: any) => id === Permissions.CancelOwnIssue
   );
+  // useEffect(() => {
+  //   console.log("all issues");
+  //   issueTrackerStore.fetchViewIssues(compId.id);
+  // }, []);
 
   useEffect(() => {
     document.body.className = "app bg-light";
 
-    dispatch(viewIssue(compId.id));
+    // dispatch(viewIssue(compId.id));
+    issueTrackerStore.fetchViewIssues(compId.id);
+    issueTrackerStore.fetchReviewersList();
   }, [dispatch, compId.id, commentData?.id]);
+
   return (
     <Fragment>
       <div className="app bg-light">
@@ -113,7 +144,7 @@ function AllIssuesForm() {
                       <Link onClick={() => navigate(-1)} to={""}>
                         All Issues
                       </Link>
-                      {" >"} RSP1 - {viewEachIssue?.payload?.issue?.id}
+                      {" >"} RSP1 - {issueTrackerStore.viewIssues?.issue?.id}
                     </h3>
                   </div>
                   <div className="tab-content-body">
@@ -128,16 +159,17 @@ function AllIssuesForm() {
                                   <label className="control-label">
                                     Issue Subject
                                   </label>
-                                  {viewEachIssue?.payload?.issue?.status ===
-                                    "CLOSED" ||
-                                  viewEachIssue?.payload?.issue?.status ===
-                                    "CANCELLED" ? (
+                                  {issueTrackerStore.viewIssues?.issue
+                                    ?.status === "CLOSED" ||
+                                  issueTrackerStore.viewIssues?.issue
+                                    ?.status === "CANCELLED" ? (
                                     <input
                                       className="form-control"
                                       type="text"
                                       placeholder="Enter here"
                                       defaultValue={
-                                        viewEachIssue?.payload?.issue?.title
+                                        issueTrackerStore.viewIssues?.issue
+                                          ?.title
                                       }
                                       onChange={(e: any) =>
                                         setFormData({
@@ -153,7 +185,8 @@ function AllIssuesForm() {
                                       type="text"
                                       placeholder="Enter here"
                                       defaultValue={
-                                        viewEachIssue?.payload?.issue?.title
+                                        issueTrackerStore.viewIssues?.issue
+                                          ?.title
                                       }
                                       onChange={(e: any) =>
                                         setFormData({
@@ -177,7 +210,7 @@ function AllIssuesForm() {
                                     type="text"
                                     placeholder="Enter here"
                                     value={
-                                      viewEachIssue?.payload?.issue
+                                      issueTrackerStore.viewIssues?.issue
                                         ?.techstackName
                                     }
                                     readOnly
@@ -194,7 +227,7 @@ function AllIssuesForm() {
                                     type="text"
                                     placeholder="Enter here"
                                     value={
-                                      viewEachIssue?.payload?.issue
+                                      issueTrackerStore.viewIssues?.issue
                                         ?.componentDisplayName
                                     }
                                     readOnly
@@ -211,7 +244,7 @@ function AllIssuesForm() {
                                     type="text"
                                     placeholder="Enter here"
                                     value={
-                                      viewEachIssue?.payload?.issue
+                                      issueTrackerStore.viewIssues?.issue
                                         ?.assignedName
                                     }
                                     readOnly
@@ -224,16 +257,17 @@ function AllIssuesForm() {
                                     Status
                                   </label>
                                   {allowReviewAllPermission.length === 0 ||
-                                  viewEachIssue?.payload?.issue?.status ===
-                                    "CLOSED" ||
-                                  viewEachIssue?.payload?.issue?.status ===
-                                    "CANCELLED" ? (
+                                  issueTrackerStore.viewIssues?.issue
+                                    ?.status === "CLOSED" ||
+                                  issueTrackerStore.viewIssues?.issue
+                                    ?.status === "CANCELLED" ? (
                                     <input
                                       className="form-control"
                                       type="text"
                                       placeholder="Enter here"
                                       value={
-                                        viewEachIssue?.payload?.issue?.status
+                                        issueTrackerStore.viewIssues?.issue
+                                          ?.status
                                       }
                                       readOnly
                                     />
@@ -248,7 +282,10 @@ function AllIssuesForm() {
                                       }
                                     >
                                       <option selected>
-                                        {viewEachIssue?.payload?.issue?.status}
+                                        {
+                                          issueTrackerStore.viewIssues?.issue
+                                            ?.status
+                                        }
                                       </option>
                                       {statusArray?.map((data: string) => {
                                         return <option>{data}</option>;
@@ -267,7 +304,7 @@ function AllIssuesForm() {
                                     type="text"
                                     placeholder="Enter here"
                                     value={
-                                      viewEachIssue?.payload?.issue
+                                      issueTrackerStore.viewIssues?.issue
                                         ?.reporterName
                                     }
                                     readOnly
@@ -280,16 +317,17 @@ function AllIssuesForm() {
                                     Priority
                                   </label>
                                   {allowReviewAllPermission.length === 0 ||
-                                  viewEachIssue?.payload?.issue?.status ===
-                                    "CLOSED" ||
-                                  viewEachIssue?.payload?.issue?.status ===
-                                    "CANCELLED" ? (
+                                  issueTrackerStore.viewIssues?.issue
+                                    ?.status === "CLOSED" ||
+                                  issueTrackerStore.viewIssues?.issue
+                                    ?.status === "CANCELLED" ? (
                                     <input
                                       className="form-control"
                                       type="text"
                                       placeholder="Enter here"
                                       value={
-                                        viewEachIssue?.payload?.issue?.priority
+                                        issueTrackerStore.viewIssues?.issue
+                                          ?.priority
                                       }
                                       readOnly
                                     />
@@ -305,7 +343,7 @@ function AllIssuesForm() {
                                     >
                                       <option selected>
                                         {
-                                          viewEachIssue?.payload?.issue
+                                          issueTrackerStore.viewIssues?.issue
                                             ?.priority
                                         }
                                       </option>
@@ -324,7 +362,7 @@ function AllIssuesForm() {
                                   <div className="issue-content">
                                     <p>
                                       {
-                                        viewEachIssue?.payload?.issue
+                                        issueTrackerStore.viewIssues?.issue
                                           ?.description
                                       }
                                     </p>
@@ -343,7 +381,7 @@ function AllIssuesForm() {
                                   </div>
                                   <div className="rates_list">
                                     <ul>
-                                      {viewEachIssue?.payload?.comments.map(
+                                      {issueTrackerStore.viewIssues?.comments.map(
                                         (item: any) => {
                                           return (
                                             <li>
@@ -372,11 +410,12 @@ function AllIssuesForm() {
                                                             )}
                                                         </div>
                                                       </div>
-                                                      {viewEachIssue?.payload
-                                                        ?.issue?.status ===
-                                                        "CLOSED" ||
-                                                      viewEachIssue?.payload
-                                                        ?.issue?.status ===
+                                                      {issueTrackerStore
+                                                        .viewIssues?.issue
+                                                        ?.status === "CLOSED" ||
+                                                      issueTrackerStore
+                                                        .viewIssues?.issue
+                                                        ?.status ===
                                                         "CANCELLED" ? (
                                                         ""
                                                       ) : (
@@ -518,10 +557,11 @@ function AllIssuesForm() {
                                             <div className="row">
                                               {allowReviewAllPermission.length !==
                                                 0 &&
-                                              viewEachIssue?.payload?.issue
-                                                ?.status !== "CLOSED" &&
-                                              viewEachIssue?.payload?.issue
-                                                ?.status !== "CANCELLED" ? (
+                                              issueTrackerStore.viewIssues
+                                                ?.issue?.status !== "CLOSED" &&
+                                              issueTrackerStore.viewIssues
+                                                ?.issue?.status !==
+                                                "CANCELLED" ? (
                                                 <div className="col-md-12">
                                                   <div className="form-group d-flex align-items-center">
                                                     <label className="control-label mb-0">
@@ -550,7 +590,7 @@ function AllIssuesForm() {
                                                         >
                                                           Select Name
                                                         </option>
-                                                        {Reviewers?.payload?.map(
+                                                        {issueTrackerStore.reviewersList?.map(
                                                           (data: any) => {
                                                             return (
                                                               <option
@@ -571,10 +611,12 @@ function AllIssuesForm() {
 
                                               <div className="col-md-12">
                                                 <div className="form-group">
-                                                  {viewEachIssue?.payload?.issue
-                                                    ?.status === "CLOSED" ||
-                                                  viewEachIssue?.payload?.issue
-                                                    ?.status === "CANCELLED" ? (
+                                                  {issueTrackerStore.viewIssues
+                                                    ?.issue?.status ===
+                                                    "CLOSED" ||
+                                                  issueTrackerStore.viewIssues
+                                                    ?.issue?.status ===
+                                                    "CANCELLED" ? (
                                                     <textarea
                                                       className="form-control"
                                                       rows={5}
@@ -616,10 +658,10 @@ function AllIssuesForm() {
                                 <div className="form-group">
                                   <div className="action w-100 my-4">
                                     {allowReviewAllPermission.length !== 0 &&
-                                    viewEachIssue?.payload?.issue?.status !==
-                                      "CANCELLED" &&
-                                    viewEachIssue?.payload?.issue?.status !==
-                                      "CLOSED" ? (
+                                    issueTrackerStore.viewIssues?.issue
+                                      ?.status !== "CANCELLED" &&
+                                    issueTrackerStore.viewIssues?.issue
+                                      ?.status !== "CLOSED" ? (
                                       <div className="small d-flex justify-content-start">
                                         {allowCancelPermission.length !== 0 ? (
                                           <Link
@@ -670,4 +712,4 @@ function AllIssuesForm() {
   );
 }
 
-export default AllIssuesForm;
+export default observer(AllIssuesForm);
