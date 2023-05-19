@@ -15,12 +15,18 @@ import {
 } from "../../redux/action/adminAction";
 import { ManageRole } from "./InterfaceTypes";
 import { Permissions } from "../../constants/PermissionConstant";
+import { observer } from "mobx-react-lite";
+import { useStore } from "../../hooks/useStore";
 function Manage_Role() {
+  const {
+    rootStore: { manageRolesStore },
+  } = useStore();
+
   const dispatch = useDispatch<AppDispatch>();
-  const { adminViewRole } = useSelector((state: any) => state?.adminViewRole);
-  const { adminRoleGetData } = useSelector(
-    (state: any) => state?.adminRoleGetData
-  );
+  // const { adminViewRole } = useSelector((state: any) => state?.adminViewRole);
+  // const { adminRoleGetData } = useSelector(
+  //   (state: any) => state?.adminRoleGetData
+  // );
   // role edit state
   const { adminFeatures } = useSelector((state: any) => state?.adminFeatures);
   const { adminRolePermission } = useSelector(
@@ -31,7 +37,7 @@ function Manage_Role() {
   const [permissionDataId] = useState<Array<string>>([]);
   const [data, setData] = useState<any>([]);
   const [search, setSearch] = useState<string>("");
-  const totalEntry = adminViewRole?.payload?.length;
+  const totalEntry = manageRolesStore?.rolesList?.length;
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [pageNumberLimit, setpageNumberLimit] = useState(5);
@@ -41,23 +47,25 @@ function Manage_Role() {
 
   useEffect(() => {
     document.body.className = "app d-flex flex-column h-100";
-    dispatch(adminViewRoleFun());
+    // dispatch(adminViewRoleFun());
+    manageRolesStore.fetchRoles();
     adminROlePermission();
   }, []);
 
   // update checkbox start
   const adminROlePermission = async () => {
-    const tempermissionData: any = await dispatch(adminRolePermissionFun());
-    setPermissionData(tempermissionData?.payload);
+    // const tempermissionData: any = await dispatch(adminRolePermissionFun());
+    await manageRolesStore.fetchPermission();
+    setPermissionData(manageRolesStore.permissionList);
   };
 
   useEffect(() => {
     const customObject = [] as number[];
-    adminRoleGetData?.payload?.permissions?.map((ele: any) => {
+    manageRolesStore.viewRolesList?.permissions?.map((ele: any) => {
       customObject.push(ele?.id);
     });
     setPermissions(customObject);
-  }, [adminRoleGetData]);
+  }, [manageRolesStore.viewRolesList]);
 
   useEffect(() => {
     // update data to send
@@ -101,7 +109,14 @@ function Manage_Role() {
   };
 
   // search data
-  const searchFilterData = adminViewRole?.payload?.filter((item: any) => {
+  // const searchFilterData = adminViewRole?.payload?.filter((item: any) => {
+  //   if (search === "") {
+  //     return item;
+  //   } else if (item?.title?.toLowerCase().includes(search.toLowerCase())) {
+  //     return item;
+  //   }
+  // });
+  const searchFilterData = manageRolesStore?.rolesList?.filter((item: any) => {
     if (search === "") {
       return item;
     } else if (item?.title?.toLowerCase().includes(search.toLowerCase())) {
@@ -185,26 +200,36 @@ function Manage_Role() {
 
   // deleteRole
   const deleteRole = async (e: any, type: any) => {
-    const datainfo: any = await dispatch(adminRoleDelete(e));
+    // const datainfo: any = await dispatch(adminRoleDelete(e));
 
-    if (datainfo?.response?.data?.status === false && type === "delete") {
-      toast.error(datainfo?.response?.data?.message);
+    manageRolesStore.fetchDeleteRoles(e);
+
+    if (
+      manageRolesStore.deleteRoles?.response?.data?.status === false &&
+      type === "delete"
+    ) {
+      toast.error(manageRolesStore.deleteRoles?.response?.data?.message);
       setTimeout(() => {
         toast.dismiss();
       }, 1000);
     } else {
       setTimeout(() => {
-        dispatch(adminViewRoleFun());
+        // dispatch(adminViewRoleFun());
+        manageRolesStore.fetchRoles();
       }, 500);
-      dispatch(adminViewRoleFun());
+      // dispatch(adminViewRoleFun());
+      manageRolesStore.fetchRoles();
     }
   };
 
   // getRole data
-
   const getRoleData = (role: any) => {
+    console.log(manageRolesStore.viewRolesList);
+
     let dataPermission: any = [];
-    role?.payload?.permissions.map((per: any) => {
+    console.log(role);
+
+    role?.permissions.map((per: any) => {
       dataPermission.push(parseInt(per?.id));
     });
 
@@ -212,18 +237,23 @@ function Manage_Role() {
     setData({
       ...data,
       permission: dataPermission,
-      title: role?.payload?.title,
-      isActive: role?.payload?.isActive,
-      description: role?.payload?.description,
+      title: role?.title,
+      isActive: role?.isActive,
+      description: role?.description,
     });
+
+    console.log(role);
   };
 
   // edit role
   const editRole = async (e: any) => {
     setRoleId(e);
-    dispatch(adminRoleGet(e));
-    var roleData = await dispatch(adminRoleGet(e));
-    return getRoleData(roleData);
+    // dispatch(adminRoleGet(e));
+    await manageRolesStore.fetchViewRoles(e);
+    // var roleData = await dispatch(adminRoleGet(e));
+    // var roleData = await manageRolesStore.fetchViewRoles(e);
+    console.log(manageRolesStore.viewRolesList);
+    return getRoleData(manageRolesStore.viewRolesList);
   };
 
   //handleActive
@@ -246,19 +276,31 @@ function Manage_Role() {
 
   // Post data - create new role
   const handlelManageRole = async (e: any) => {
+    console.log("enter");
+
     e.preventDefault();
     let senddata = JSON.stringify(data);
-    const roleStatus: any = await dispatch(adminRolePost(senddata));
-    if (roleStatus?.response?.data?.status === false) {
+
+    // const roleStatus: any = await dispatch(adminRolePost(senddata));
+
+    await manageRolesStore.fetchAddNewRoles(senddata);
+    console.log(manageRolesStore.addNewRoles.response.data.status);
+
+    if (manageRolesStore.addNewRoles.response.data.status === false) {
+      console.log("if");
       toast.error("Role Already Exist!");
     } else {
+      console.log("else");
+
       e.target.reset();
       var btn = document.getElementById("idButtonPost");
       btn?.click();
       setTimeout(() => {
-        dispatch(adminViewRoleFun());
+        // dispatch(adminViewRoleFun());
+        manageRolesStore.fetchRoles();
       }, 1000);
-      dispatch(adminViewRoleFun());
+      // dispatch(adminViewRoleFun());
+      manageRolesStore.fetchRoles();
 
       toast.success("Role Created Successfully!");
       permissions.splice(0, permissions.length);
@@ -270,20 +312,24 @@ function Manage_Role() {
     e.preventDefault();
     let senddata = JSON.stringify(data);
 
-    const roleUpdateData: any = await dispatch(
-      adminRoleUpdate(roleId, senddata)
-    );
+    // const roleUpdateData: any = await dispatch(
+    //   adminRoleUpdate(roleId, senddata)
+    // );
 
-    if (roleUpdateData?.response?.data?.status === false) {
+    await manageRolesStore.fetchAddRoles(roleId, senddata);
+
+    if (manageRolesStore.saveAddedRoles.status === false) {
       toast.error("Role Already Exist!");
     } else {
       var btn = document.getElementById("idButtonUpdate");
       btn?.click();
       setTimeout(() => {
         e.target.reset();
-        dispatch(adminViewRoleFun());
+        // dispatch(adminViewRoleFun());
+        manageRolesStore.fetchRoles();
       }, 500);
-      dispatch(adminViewRoleFun());
+      // dispatch(adminViewRoleFun());
+      manageRolesStore.fetchRoles();
 
       toast.success("Role Update Successfully!");
       permissions.splice(0, permissions.length);
@@ -345,7 +391,7 @@ function Manage_Role() {
                         </tr>
                       </thead>
                       <tbody>
-                        {searchData?.map((data: ManageRole) => {
+                        {searchData?.map((data: any) => {
                           return (
                             <Fragment>
                               <tr>
@@ -641,7 +687,7 @@ function Manage_Role() {
                               <Fragment>
                                 <tr>
                                   {" "}
-                                  <td>{permissionName?.title}</td>
+                                  <td colSpan={2}>{permissionName?.title}</td>
                                   <td key={permissionName?.id}>
                                     <div className="animated-checkbox">
                                       <label className="mb-0">
@@ -719,7 +765,7 @@ function Manage_Role() {
                       className="form-control"
                       type="text"
                       required
-                      defaultValue={adminRoleGetData?.payload?.title}
+                      defaultValue={manageRolesStore.viewRolesList?.title}
                       placeholder="Enter here"
                       onChange={(e: any) =>
                         setData({ ...data, title: e.target.value })
@@ -734,7 +780,7 @@ function Manage_Role() {
                       className="form-control"
                       rows={4}
                       required
-                      defaultValue={adminRoleGetData?.payload?.description}
+                      defaultValue={manageRolesStore.viewRolesList?.description}
                       placeholder="Enter your address"
                       onChange={(e: any) =>
                         setData({ ...data, description: e.target.value })
@@ -748,7 +794,9 @@ function Manage_Role() {
                         <input
                           type="checkbox"
                           onClick={updateHandleActive}
-                          defaultChecked={adminRoleGetData?.payload?.isActive}
+                          defaultChecked={
+                            manageRolesStore.viewRolesList?.isActive
+                          }
                         />
                         <span className="button-indecator"></span>
                       </label>
@@ -787,7 +835,7 @@ function Manage_Role() {
                               <Fragment>
                                 <tr>
                                   {" "}
-                                  <td>{permissionName?.title}</td>
+                                  <td colSpan={2}>{permissionName?.title}</td>
                                   <td key={permissionName?.id}>
                                     <div className="animated-checkbox">
                                       <label className="mb-0">
@@ -865,7 +913,7 @@ function Manage_Role() {
                     type="text"
                     required
                     readOnly
-                    defaultValue={adminRoleGetData?.payload?.title}
+                    defaultValue={manageRolesStore.viewRolesList?.title}
                     placeholder="Enter here"
                   />
                 </div>
@@ -878,7 +926,7 @@ function Manage_Role() {
                     className="form-control"
                     rows={4}
                     required
-                    defaultValue={adminRoleGetData?.payload?.description}
+                    defaultValue={manageRolesStore.viewRolesList?.description}
                     placeholder="Enter your address"
                   ></textarea>
                 </div>
@@ -889,7 +937,7 @@ function Manage_Role() {
                       <input
                         readOnly
                         type="checkbox"
-                        checked={adminRoleGetData?.payload?.isActive}
+                        checked={manageRolesStore.viewRolesList?.isActive}
                       />
 
                       <span className="button-indecator"></span>
@@ -926,7 +974,7 @@ function Manage_Role() {
                           return (
                             <Fragment>
                               <tr>
-                                <td>{permissionName?.title}</td>
+                                <td colSpan={2}>{permissionName?.title}</td>
                                 <td key={permissionName?.id}>
                                   <div className="animated-checkbox">
                                     <label className="mb-0">
@@ -969,4 +1017,4 @@ function Manage_Role() {
   );
 }
 
-export default Manage_Role;
+export default observer(Manage_Role);
