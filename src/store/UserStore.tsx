@@ -13,7 +13,7 @@ export interface Iuser {
 
 export class UserStore {
   user: Iuser[] = [];
-  // data = "";
+
   rootStore: IRootStore;
 
   constructor(rootStore: IRootStore) {

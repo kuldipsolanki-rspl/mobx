@@ -23,18 +23,25 @@ import {
   fetchUserPost,
 } from "../../redux/action/userAction";
 import { ManageUser } from "./InterfaceTypes";
+import { observer } from "mobx-react-lite";
+import { useStore } from "../../hooks/useStore";
 function Assign_Permissions() {
+  const {
+    rootStore: { assignPermissionsStore, manageRolesStore },
+  } = useStore();
+
   const dispatch = useDispatch<AppDispatch>();
-  const { adminManageUserOneData } = useSelector(
-    (state: any) => state?.adminManageUserGetOne
-  );
-  const { adminViewRole } = useSelector((state: any) => state?.adminViewRole);
-  const { adminManageUserGetData } = useSelector(
-    (state: any) => state.adminManageUserGet
-  );
-  const { fetchUserPostData } = useSelector(
-    (state: any) => state?.fetchUserPost
-  );
+  // const { adminManageUserOneData } = useSelector(
+  //   (state: any) => state?.adminManageUserGetOne
+  // );
+  // const { adminViewRole } = useSelector((state: any) => state?.adminViewRole);
+  // const { adminManageUserGetData } = useSelector(
+  //   (state: any) => state.adminManageUserGet
+  // );
+  // const { fetchUserPostData } = useSelector(
+  //   (state: any) => state?.fetchUserPost
+  // );
+
   const [userId, setUserId] = useState();
   const [permissionData, setPermissionData] = useState([]);
   const [categoryListData, setCategoryListData] = useState<any>([]);
@@ -46,7 +53,8 @@ function Assign_Permissions() {
   const [search, setSearch] = useState("");
   const [nameError, setNameError] = useState(false);
   const [subCatError, setSubCatError] = useState(false);
-  const totalEntry = adminManageUserGetData?.payload?.length;
+  // const totalEntry = adminManageUserGetData?.payload?.length;
+  const totalEntry = assignPermissionsStore.assignedRolesList?.length;
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [pageNumberLimit, setpageNumberLimit] = useState(5);
@@ -55,9 +63,12 @@ function Assign_Permissions() {
   const [permissions, setPermissions] = useState<any>([]);
   useEffect(() => {
     document.body.className = "app d-flex flex-column h-100";
-    dispatch(adminViewRoleFun());
-    dispatch(adminManageUserGet());
-    dispatch(adminViewRoleFun());
+    // dispatch(adminViewRoleFun());
+    assignPermissionsStore.fetchAssignedRoles();
+    // dispatch(adminManageUserGet());
+    // dispatch(adminViewRoleFun());
+    manageRolesStore.fetchRoles();
+    // assignPermissionsStore.fetchAssignedRoles();
     rolePermission();
   }, []);
 
@@ -94,9 +105,16 @@ function Assign_Permissions() {
 
     const CateogryData = { id: customObject };
 
-    var subCategoryData = await dispatch(SubCategoryListFun(CateogryData));
+    // var subCategoryData = await dispatch(SubCategoryListFun(CateogryData));
 
-    setSubCategoryListData(subCategoryData);
+    await assignPermissionsStore.fetchCategoryTechstackList(CateogryData);
+
+    console.log(
+      "categoryTechstackList",
+      assignPermissionsStore.categoryTechstackList
+    );
+
+    setSubCategoryListData(assignPermissionsStore.categoryTechstackList);
   };
 
   const SubCateogry = async () => {
@@ -109,15 +127,17 @@ function Assign_Permissions() {
   };
 
   const rolePermission = async () => {
-    const tempermissionData: any = await dispatch(adminRolePermissionFun());
+    // const tempermissionData: any = await dispatch(adminRolePermissionFun());
+    await manageRolesStore.fetchPermission();
 
-    const CategoryList = await dispatch(CategoryListFun());
-    setCategoryListData(CategoryList);
-    setPermissionData(tempermissionData?.payload);
+    // const CategoryList = await dispatch(CategoryListFun());
+    await assignPermissionsStore.fetchCategoryList();
+
+    setPermissionData(manageRolesStore.permissionList);
   };
 
   // activeRole Filter data
-  const roleFilter = adminViewRole?.payload?.filter((role: any) => {
+  const roleFilter = manageRolesStore.rolesList?.filter((role: any) => {
     if (role?.isActive) {
       return role;
     }
@@ -125,7 +145,7 @@ function Assign_Permissions() {
 
   // handel checkbox
   const filterName = (inputValue: string) => {
-    return fetchUserPostData?.payload?.filter((info: any) =>
+    return assignPermissionsStore.user?.filter((info: any) =>
       info?.name.toLowerCase().includes(inputValue.toLowerCase())
     );
   };
@@ -136,7 +156,7 @@ function Assign_Permissions() {
     readonly designation: string;
   }
   const fetchData = (users: any) => {
-    return users?.payload?.map((user: any) => {
+    return users?.map((user: any) => {
       return {
         value: user?.email,
         label: user?.name,
@@ -167,16 +187,33 @@ function Assign_Permissions() {
   ) => {
     if (inputValue.length > 2) {
       const data = { search: inputValue };
-      var fetchDataValue: any = await dispatch(fetchUserPost(data));
+
+      // var fetchDataValue: any = await dispatch(fetchUserPost(data));
+
+      await assignPermissionsStore.fetchUser(data);
 
       filterName(inputValue);
     }
 
-    return fetchData(fetchDataValue);
+    // return fetchData(fetchDataValue);
+    return fetchData(assignPermissionsStore.user);
   };
 
   // search data
-  const searchFilterData = adminManageUserGetData?.payload?.filter(
+  // const searchFilterData = adminManageUserGetData?.payload?.filter(
+  //   (item: any) => {
+  //     if (search === "") {
+  //       return item;
+  //     } else if (
+  //       item?.name.toLowerCase().includes(search.toLocaleLowerCase()) ||
+  //       item?.email.toLowerCase().includes(search.toLocaleLowerCase())
+  //     ) {
+  //       return item;
+  //     }
+  //   }
+  // );
+
+  const searchFilterData = assignPermissionsStore.assignedRolesList?.filter(
     (item: any) => {
       if (search === "") {
         return item;
@@ -274,18 +311,19 @@ function Assign_Permissions() {
 
   // edit User
   const editUser = async (e: any) => {
-    const oneUserGetData: any = await dispatch(adminManageUserGetOne(e));
+    // const oneUserGetData: any = await dispatch(adminManageUserGetOne(e));
+    await assignPermissionsStore.fetchEditUser(e);
 
     let categoryData: any = [];
     let subCategoryData: any = [];
 
-    oneUserGetData?.payload?.assignedStack?.category?.map(
+    assignPermissionsStore.editUserList?.assignedStack?.category?.map(
       async (category: any) => {
         categoryData.push(category);
       }
     );
 
-    oneUserGetData?.payload?.assignedStack?.techstack?.map(
+    assignPermissionsStore.editUserList?.assignedStack?.techstack?.map(
       async (subCategory: any) => {
         subCategoryData.push(subCategory);
       }
@@ -293,20 +331,20 @@ function Assign_Permissions() {
     setCategoryList(categoryData);
     setSubCategoryList(subCategoryData);
     setUserId(e);
-    return getRoleData(oneUserGetData);
+    return getRoleData(assignPermissionsStore.editUserList);
   };
 
   const getRoleData = (role: any) => {
     let dataPermission: any = [];
-    role?.payload?.permissions.map((per: any) => {
+    role?.permissions.map((per: any) => {
       dataPermission.push(parseInt(per?.id));
     });
     setPermissions(dataPermission);
 
     setData({
       ...data,
-      isActive: role?.payload?.userData?.isActive,
-      role_id: role?.payload?.userData?.role_id,
+      isActive: role?.userData?.isActive,
+      role_id: role?.userData?.role_id,
       subcategory: subCategoryList,
     });
   };
@@ -314,8 +352,11 @@ function Assign_Permissions() {
   // handle Role
   const handelRolePost = async (e: any) => {
     let dataPermission: number[] = [];
-    const userData: any = await dispatch(adminRoleGet(e.target.value));
-    userData?.payload?.permissions.map((per: any) => {
+
+    // const userData: any = await dispatch(adminRoleGet(e.target.value));
+    await manageRolesStore.fetchViewRoles(e.target.value);
+
+    manageRolesStore.viewRolesList?.permissions.map((per: any) => {
       dataPermission.push(parseInt(per?.id));
     });
     setPermissions(dataPermission);
@@ -327,19 +368,24 @@ function Assign_Permissions() {
     e.preventDefault();
     let senddata = JSON.stringify(data);
 
-    const AssignPerData: any = await dispatch(
-      adminManageUserUpdate(userId, senddata)
-    );
+    // const AssignPerData: any = await dispatch(
+    //   adminManageUserUpdate(userId, senddata)
+    // );
 
-    if (AssignPerData?.status) {
+    assignPermissionsStore.fetchUpdateUser(userId, senddata);
+
+    if (assignPermissionsStore.updateUserList?.status === "true") {
       toast.success("Permissions Update Successfully!");
 
-      dispatch(adminManageUserGet());
+      // dispatch(adminManageUserGet());
+      assignPermissionsStore.fetchAssignedRoles();
+
       var btn = document.getElementById("idButtonUpdate");
       btn?.click();
       setTimeout(() => {
         e.target.reset();
-        dispatch(adminManageUserGet());
+        // dispatch(adminManageUserGet());
+        assignPermissionsStore.fetchAssignedRoles();
       }, 500);
     }
     setCategoryList([]);
@@ -357,15 +403,23 @@ function Assign_Permissions() {
       setSubCatError(true);
     } else {
       e.target.reset();
-      const userStatus: any = await dispatch(adminManageUserPost(senddata));
 
-      if (userStatus?.response.data?.status === false) {
-        toast.error(userStatus?.response?.data?.message);
+      // const userStatus: any = await dispatch(adminManageUserPost(senddata));
+      await assignPermissionsStore.fetchAddUser(senddata);
+
+      console.log(assignPermissionsStore.addUserList?.status);
+
+      if (assignPermissionsStore.addUserList?.status === false) {
+        console.log("if");
+
+        toast.error(assignPermissionsStore.addUserList?.message);
       } else {
+        console.log("else");
         var btn = document.getElementById("idButtonPost");
         btn?.click();
         setTimeout(() => {
-          dispatch(adminManageUserGet());
+          // dispatch(adminManageUserGet());
+          assignPermissionsStore.fetchAssignedRoles();
         }, 500);
         toast.success("Assign Permissions Created Successfully!");
       }
@@ -390,7 +444,7 @@ function Assign_Permissions() {
               <div className="tile_wrapper">
                 <div className="tilewp_header">
                   <div className="tilewp-left">
-                    <h3 className="tilewp-title">Assign Permissions </h3>
+                    <h3 className="tilewp-title">Assign Permissions</h3>
                   </div>
                   <div className="tilewp-right">
                     <div className="has-search search-group mr-3">
@@ -432,7 +486,7 @@ function Assign_Permissions() {
                         </tr>
                       </thead>
                       <tbody>
-                        {searchData?.map((user: ManageUser) => {
+                        {searchData?.map((user: any) => {
                           return (
                             <Fragment>
                               <tr>
@@ -688,8 +742,8 @@ function Assign_Permissions() {
                       Category <span className="text-danger">*</span>
                     </label>
                     <Multiselect
-                      options={categoryListData?.payload?.map(
-                        (item: string) => {
+                      options={assignPermissionsStore.categoryList?.map(
+                        (item: any) => {
                           return item;
                         }
                       )}
@@ -706,11 +760,9 @@ function Assign_Permissions() {
                       Sub-Category <span className="text-danger">*</span>
                     </label>
                     <Multiselect
-                      options={subCategoryListData?.payload?.map(
-                        (item: string) => {
-                          return item;
-                        }
-                      )}
+                      options={subCategoryListData?.map((item: string) => {
+                        return item;
+                      })}
                       displayValue="name"
                       id="id"
                       selectedValues={subCategoryList}
@@ -756,7 +808,7 @@ function Assign_Permissions() {
                                 <Fragment>
                                   <tr>
                                     {" "}
-                                    <td>{permissionName?.title}</td>
+                                    <td colSpan={2}>{permissionName?.title}</td>
                                     <td key={permissionName?.id}>
                                       <div className="animated-checkbox">
                                         <label className="mb-0">
@@ -836,7 +888,7 @@ function Assign_Permissions() {
                       type="text"
                       readOnly
                       defaultValue={
-                        adminManageUserOneData?.payload?.userData?.name
+                        assignPermissionsStore.editUserList?.userData?.name
                       }
                     />
                   </div>
@@ -849,7 +901,7 @@ function Assign_Permissions() {
                       type="text"
                       readOnly
                       defaultValue={
-                        adminManageUserOneData?.payload?.userData?.email
+                        assignPermissionsStore.editUserList?.userData?.email
                       }
                     />
                   </div>
@@ -862,7 +914,8 @@ function Assign_Permissions() {
                       type="text"
                       readOnly
                       defaultValue={
-                        adminManageUserOneData?.payload?.userData?.designation
+                        assignPermissionsStore.editUserList?.userData
+                          ?.designation
                       }
                     />
                   </div>
@@ -874,7 +927,8 @@ function Assign_Permissions() {
                           type="checkbox"
                           onClick={updateHandleActive}
                           defaultChecked={
-                            adminManageUserOneData?.payload?.userData?.isActive
+                            assignPermissionsStore.editUserList?.userData
+                              ?.isActive
                           }
                         />
                         <span className="button-indecator"></span>
@@ -892,8 +946,8 @@ function Assign_Permissions() {
                             <option
                               key={role?.id}
                               selected={
-                                adminManageUserOneData?.payload?.userData?.role
-                                  ?.id === role?.id
+                                assignPermissionsStore.editUserList?.userData
+                                  ?.role?.id === role?.id
                               }
                               value={role?.id}
                             >
@@ -909,8 +963,8 @@ function Assign_Permissions() {
                       Category <span className="text-danger">*</span>
                     </label>
                     <Multiselect
-                      options={categoryListData?.payload?.map(
-                        (item: string) => {
+                      options={assignPermissionsStore.categoryList?.map(
+                        (item: any) => {
                           return item;
                         }
                       )}
@@ -926,11 +980,9 @@ function Assign_Permissions() {
                       Sub-Category <span className="text-danger">*</span>
                     </label>
                     <Multiselect
-                      options={subCategoryListData?.payload?.map(
-                        (item: string) => {
-                          return item;
-                        }
-                      )}
+                      options={subCategoryListData?.map((item: string) => {
+                        return item;
+                      })}
                       displayValue="name"
                       id="id"
                       selectedValues={subCategoryList}
@@ -976,7 +1028,7 @@ function Assign_Permissions() {
                                 <Fragment>
                                   <tr>
                                     {" "}
-                                    <td>{permissionName?.title}</td>
+                                    <td colSpan={2}>{permissionName?.title}</td>
                                     <td key={permissionName?.id}>
                                       <div className="animated-checkbox">
                                         <label className="mb-0">
@@ -1054,7 +1106,7 @@ function Assign_Permissions() {
                     className="form-control"
                     type="text"
                     readOnly
-                    value={adminManageUserOneData?.payload?.userData?.name}
+                    value={assignPermissionsStore.editUserList?.userData?.name}
                   />
                 </div>
                 <div className="form-group">
@@ -1065,7 +1117,7 @@ function Assign_Permissions() {
                     className="form-control"
                     type="text"
                     readOnly
-                    value={adminManageUserOneData?.payload?.userData?.email}
+                    value={assignPermissionsStore.editUserList?.userData?.email}
                   />
                 </div>
                 <div className="form-group">
@@ -1077,7 +1129,7 @@ function Assign_Permissions() {
                     type="text"
                     readOnly
                     defaultValue={
-                      adminManageUserOneData?.payload?.userData?.designation
+                      assignPermissionsStore.editUserList?.userData?.designation
                     }
                   />
                 </div>
@@ -1089,7 +1141,8 @@ function Assign_Permissions() {
                         readOnly
                         type="checkbox"
                         defaultChecked={
-                          adminManageUserOneData?.payload?.userData?.isActive
+                          assignPermissionsStore.editUserList?.userData
+                            ?.isActive
                         }
                       />
                       <span className="button-indecator"></span>
@@ -1107,8 +1160,8 @@ function Assign_Permissions() {
                           <option
                             key={role?.id}
                             selected={
-                              adminManageUserOneData?.payload?.userData?.role
-                                ?.id === role?.id
+                              assignPermissionsStore.editUserList?.userData
+                                ?.role?.id === role?.id
                             }
                             value={role?.id}
                           >
@@ -1218,4 +1271,4 @@ function Assign_Permissions() {
   );
 }
 
-export default Assign_Permissions;
+export default observer(Assign_Permissions);
