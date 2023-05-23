@@ -20,23 +20,30 @@ import {
 } from "../../redux/action/adminAction";
 import ComponentNavbar from "./componentNavbar";
 import { TechstackReportData } from "./InterfaceTypes";
+import { observer } from "mobx-react-lite";
+import { useStore } from "../../hooks/useStore";
 
 function Report() {
+  const {
+    rootStore: { reportsStore, manageComponentStore },
+  } = useStore();
+
   const dispatch = useDispatch<AppDispatch>();
   const { techStacks } = useSelector((state: any) => state?.techStacks);
 
-  const { techStackGetReportData } = useSelector(
-    (state: any) => state?.techStackGetReport
-  );
+  // const { techStackGetReportData } = useSelector(
+  //   (state: any) => state?.techStackGetReport
+  // );
 
-  const { techStackGetReportApprovalData } = useSelector(
-    (state: any) => state?.techStackGetApprovalReport
-  );
+  // const { techStackGetReportApprovalData } = useSelector(
+  //   (state: any) => state?.techStackGetApprovalReport
+  // );
 
-  const { trendComponentData } = useSelector(
-    (state: any) => state?.trendComponent
-  );
-  const [techStackId, setTechStackId] = useState("");
+  // const { trendComponentData } = useSelector(
+  //   (state: any) => state?.trendComponent
+  // );
+
+  const [techStackId, setTechStackId] = useState({});
   const [trendDuration, setTrendDuration] = useState("week");
   const [searchWord, setSearchWord] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,33 +53,37 @@ function Report() {
   const [maxPageNumberLimit, setmaxPageNumberLimit] = useState(5);
   const [minPageNumberLimit, setminPageNumberLimit] = useState(0);
   const techStackData = async () => {
-    const techStackData: any = await dispatch(techStackList());
-    dispatch(techStackGetReport(techStackData?.payload?.[0]?.id));
-    setTechStackId(techStackData?.payload?.[0]?.id);
+    // const techStackData: any = await dispatch(techStackList());
+    await manageComponentStore.fetchTechstacks();
+
+    // dispatch(techStackGetReport(techStackData?.payload?.[0]?.id));
+    reportsStore.fetchReports(manageComponentStore.techStacks?.[0]?.id);
+
+    setTechStackId(manageComponentStore.techStacks?.[0]?.id);
   };
 
   useEffect(() => {
     document.body.className = "app d-flex flex-column h-100 nav-light";
     techStackData();
-    dispatch(techStackGetApprovalReport());
+    // dispatch(techStackGetApprovalReport());
+    reportsStore.fetchTechStackApprovalReport();
   }, []);
   useEffect(() => {
-    dispatch(trendComponent(techStackId, trendDuration));
+    // dispatch(trendComponent(techStackId, trendDuration));
+    reportsStore.fetchTrendComponent(techStackId, trendDuration);
   }, [dispatch, techStackId, trendDuration]);
 
-  const totalEntry = techStackGetReportData?.payload?.length;
+  const totalEntry = reportsStore.reportsList?.length;
   //search bar - data search
-  const searchFilterData = techStackGetReportData?.payload?.filter(
-    (item: TechstackReportData) => {
-      if (searchWord == "") {
-        return item;
-      } else if (
-        item.name.toLowerCase().includes(searchWord.toLocaleLowerCase())
-      ) {
-        return item;
-      }
+  const searchFilterData = reportsStore.reportsList?.filter((item: any) => {
+    if (searchWord == "") {
+      return item;
+    } else if (
+      item.name.toLowerCase().includes(searchWord.toLocaleLowerCase())
+    ) {
+      return item;
     }
-  );
+  });
 
   // pagination
   const handleClick = (event: any) => {
@@ -146,7 +157,8 @@ function Report() {
   //pagination end
   // handelTechStack
   const handelTechStack = (e: any) => {
-    dispatch(techStackGetReport(e.target.value));
+    // dispatch(techStackGetReport(e.target.value));
+    reportsStore.fetchReports(e.target.value);
   };
 
   return (
@@ -232,7 +244,7 @@ function Report() {
                                   id="exampleFormControlSelect1"
                                   required
                                 >
-                                  {techStacks?.payload?.map(
+                                  {manageComponentStore.techStacks?.map(
                                     (techstack: any) => {
                                       return (
                                         <Fragment>
@@ -261,7 +273,7 @@ function Report() {
                                 </tr>
                               </thead>
 
-                              {techStackGetReportData?.payload?.length &&
+                              {reportsStore.reportsList?.length &&
                               searchData?.length !== 0 ? (
                                 <tbody>
                                   {searchData?.map((data: any) => {
@@ -283,7 +295,7 @@ function Report() {
                             </table>
                           </div>
                         </div>
-                        {techStackGetReportData?.payload?.length !== 0 ? (
+                        {reportsStore.reportsList?.length !== 0 ? (
                           <div className="tilewp-footer ">
                             <div className="tile-footer-lt">
                               <p>
@@ -411,7 +423,7 @@ function Report() {
                               className="img-fluid"
                             >
                               <BarChart
-                                data={trendComponentData?.payload}
+                                data={reportsStore.trendComponentList}
                                 width={400}
                                 height={400}
                               >
@@ -444,10 +456,10 @@ function Report() {
                                 </tr>
                               </thead>
 
-                              {techStackGetReportApprovalData?.payload
+                              {reportsStore.techStackApprovalReportList
                                 ?.length !== 0 ? (
                                 <tbody>
-                                  {techStackGetReportApprovalData?.payload?.map(
+                                  {reportsStore.techStackApprovalReportList?.map(
                                     (data: any) => {
                                       return (
                                         <tr>
@@ -487,4 +499,4 @@ function Report() {
   );
 }
 
-export default Report;
+export default observer(Report);

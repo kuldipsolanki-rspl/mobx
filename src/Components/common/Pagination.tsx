@@ -6,7 +6,6 @@ function Pagination(props: any) {
   const [pageNumberLimit] = useState(5);
   const [maxPageNumberLimit, setmaxPageNumberLimit] = useState(5);
   const [minPageNumberLimit, setminPageNumberLimit] = useState(0);
-  console.log("props", props);
   //pagination start
   const totalEntry = props.data?.length;
   const indexOfLastItem = currentPage * props.itemPerPage;

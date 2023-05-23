@@ -4,6 +4,7 @@ import { IssueTrackerStore } from "./issueTrackerStore";
 import { LoginStore } from "./loginStore";
 import { ManageComponentStore } from "./manageComponentsStore";
 import { ManageRolesStore } from "./manageRolesStore";
+import { ReportsStore } from "./reportsStore";
 import { TechSearchstore } from "./techSearchstore";
 import { UserStore } from "./UserStore";
 
@@ -16,6 +17,7 @@ export interface IRootStore {
   issueTrackerStore: IssueTrackerStore;
   manageRolesStore: ManageRolesStore;
   assignPermissionsStore: AssignPermissionsStore;
+  reportsStore: ReportsStore;
 }
 
 export class RootStore implements IRootStore {
@@ -27,6 +29,7 @@ export class RootStore implements IRootStore {
   issueTrackerStore: IssueTrackerStore;
   manageRolesStore: ManageRolesStore;
   assignPermissionsStore: AssignPermissionsStore;
+  reportsStore: ReportsStore;
 
   constructor() {
     this.userStore = new UserStore(this);
@@ -37,5 +40,6 @@ export class RootStore implements IRootStore {
     this.issueTrackerStore = new IssueTrackerStore(this);
     this.manageRolesStore = new ManageRolesStore(this);
     this.assignPermissionsStore = new AssignPermissionsStore(this);
+    this.reportsStore = new ReportsStore(this);
   }
 }
