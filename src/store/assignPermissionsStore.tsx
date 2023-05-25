@@ -119,8 +119,16 @@ export class AssignPermissionsStore {
 
   //fetch assigned roles
   async fetchAssignedRoles() {
-    const getData: any = await fetchFunction(`api/user/all`);
-    this.assignedRolesList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/user/all`);
+        this.assignedRolesList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAssignedRoles() {
@@ -129,8 +137,16 @@ export class AssignPermissionsStore {
 
   //fetch categories
   async fetchCategoryList() {
-    const getData: any = await fetchFunction(`api/category/list`);
-    this.categoryList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/category/list`);
+        this.categoryList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getCategoryList() {
@@ -139,8 +155,16 @@ export class AssignPermissionsStore {
 
   //fetch categories techstack
   async fetchCategoryTechstackList(id: any) {
-    const getData: any = await postFunction(`api/category/techstack`, id);
-    this.categoryTechstackList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await postFunction(`api/category/techstack`, id);
+        this.categoryTechstackList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getCategoryTechstackList() {
@@ -149,8 +173,16 @@ export class AssignPermissionsStore {
 
   //fetch edit permissions
   async fetchEditUser(id: any) {
-    const getData: any = await fetchFunction(`api/user/${id}`);
-    this.editUserList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/user/${id}`);
+        this.editUserList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getEditUser() {
@@ -159,8 +191,16 @@ export class AssignPermissionsStore {
 
   //update edit permissions
   async fetchUpdateUser(id: any, userData: any) {
-    const getData: any = await patchFunction(`api/user/${id}`, userData);
-    this.updateUserList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await patchFunction(`api/user/${id}`, userData);
+        this.updateUserList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getUpdateUser() {
@@ -169,9 +209,16 @@ export class AssignPermissionsStore {
 
   //add permissions
   async fetchAddUser(dataObj: any) {
-    const getData: any = await postFunction(`api/user`, dataObj);
-    this.addUserList = getData.payload;
-    console.log(this.addUserList);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await postFunction(`api/user`, dataObj);
+        this.addUserList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAddUser() {
@@ -180,8 +227,16 @@ export class AssignPermissionsStore {
 
   //fetch user
   async fetchUser(email: any) {
-    const getData = await postFunction(`api/fetchuser`, email);
-    this.user = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData = await postFunction(`api/fetchuser`, email);
+        this.user = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getUser() {

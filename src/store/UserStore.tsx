@@ -25,9 +25,22 @@ export class UserStore {
     this.rootStore = rootStore;
   }
 
+  // async fetchUser(email: any) {
+  //   const getData = await postFunction(`api/fetchuser`, email);
+  //   this.user = getData.payload;
+  // }
+
   async fetchUser(email: any) {
-    const getData = await postFunction(`api/fetchuser`, email);
-    this.user = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData = await postFunction(`api/fetchuser`, email);
+        this.user = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getUser() {

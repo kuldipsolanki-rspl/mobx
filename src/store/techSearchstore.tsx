@@ -135,24 +135,38 @@ export class TechSearchstore {
     });
     this.rootStore = rootStore;
   }
-  async fetchtechStackList(searchWord: any) {
-    const getData = await fetchFunction(
-      `api/component/search?search=${searchWord}`
-    );
-    console.log(getData, "getData1");
 
-    // this.userDetails = tokenRes
-    this.techStacklist = getData.payload;
+  async fetchtechStackList(searchWord: any) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData = await fetchFunction(
+          `api/component/search?search=${searchWord}`
+        );
+        this.techStacklist = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   async fetchseacrchFilterpost(getword: any) {
-    const getDatasearchData = await postFunction(
-      `api/component/filter`,
-      getword
-    );
-    console.log(getDatasearchData, "getData");
-    // this.userDetails = tokenRes
-    this.searchFilterPost = getDatasearchData;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getDatasearchData = await postFunction(
+          `api/component/filter`,
+          getword
+        );
+        this.searchFilterPost = getDatasearchData;
+        return resolve(getDatasearchData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   get gettechstacklist() {
     return this.techStacklist;
   }

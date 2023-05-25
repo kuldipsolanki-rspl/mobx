@@ -232,7 +232,7 @@ export const userViewComponent = (id: any) => async (dispatch: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       dispatch({ type: VIEW_COMPONENT_GET_REQUEST });
-      const getData: any = await fetchFunction(``);
+      const getData: any = await fetchFunction(`api/component/view?id=${id}`);
       dispatch({ type: VIEW_COMPONENT_GET_SUCCESS, payload: getData });
       return resolve(getData);
     } catch (error) {
@@ -498,7 +498,7 @@ export const raiseIssueSubmit =
     }
   };
 
-//remaining// edit Reported issue patch Api
+// edit Reported issue patch Api
 export const editReportedIssue =
   (id: any, formData: any) => async (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
@@ -547,7 +547,7 @@ export const assignedIssuesList = () => async (dispatch: any) => {
   }
 };
 
-//remaining // View Particular GET Api
+// View Particular GET Api
 export const viewIssue = (compId: any) => async (dispatch: any) => {
   try {
     dispatch({ type: VIEW_ISSUE_REQUEST });
@@ -626,7 +626,7 @@ export const DeleteReply = (id: any) => async (dispatch: any) => {
   }
 };
 
-//remaining // CategoryList
+// CategoryList
 export const CategoryListFun = () => async (dispatch: any) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -641,7 +641,7 @@ export const CategoryListFun = () => async (dispatch: any) => {
   });
 };
 
-//remaining // CategoryList
+// CategoryList
 export const SubCategoryListFun = (id: any) => async (dispatch: any) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -673,7 +673,7 @@ export const ReviewersList = () => async (dispatch: any) => {
   });
 };
 
-//remaining // Cancel Issue
+// Cancel Issue
 export const cancelIssue = (id: Number) => async (dispatch: any) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -688,7 +688,7 @@ export const cancelIssue = (id: Number) => async (dispatch: any) => {
   });
 };
 
-//remaining  // Edit Comment
+// Edit Comment
 export const editComment =
   (id: any, formData: any) => async (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
@@ -704,7 +704,7 @@ export const editComment =
     });
   };
 
-//remaining  // Delete Comment
+// Delete Comment
 export const deleteComment = (id: Number) => async (dispatch: any) => {
   return new Promise(async (resolve, reject) => {
     try {

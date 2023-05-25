@@ -210,8 +210,16 @@ export class IssueTrackerStore {
 
   // all issues List
   async fetchAllIssues() {
-    const getData: any = await fetchFunction(`api/issues`);
-    this.allIssuesList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/issues`);
+        this.allIssuesList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAllIssues() {
@@ -220,8 +228,16 @@ export class IssueTrackerStore {
 
   // Reviewers List
   async fetchReviewersList() {
-    const getData: any = await fetchFunction(`api/reviewers`);
-    this.reviewersList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/reviewers`);
+        this.reviewersList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getReviewersList() {
@@ -230,8 +246,16 @@ export class IssueTrackerStore {
 
   // reported issues List
   async fetchReportedIssues() {
-    const getData: any = await fetchFunction(`api/issues/reported`);
-    this.reportedIssuesList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/issues/reported`);
+        this.reportedIssuesList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getReportedIssues() {
@@ -240,8 +264,16 @@ export class IssueTrackerStore {
 
   // assigned issues List
   async fetchAssignedIssues() {
-    const getData: any = await fetchFunction(`api/issues/assigned`);
-    this.assignedIssuesList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/issues/assigned`);
+        this.assignedIssuesList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAssignedIssues() {
@@ -250,8 +282,16 @@ export class IssueTrackerStore {
 
   // view assigned issues
   async fetchViewIssues(compId: any) {
-    const getData: any = await fetchFunction(`api/issue/${compId}`);
-    this.viewIssues = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/issue/${compId}`);
+        this.viewIssues = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getViewIssues() {
@@ -260,9 +300,16 @@ export class IssueTrackerStore {
 
   // edit Reported issue
   async fetchEditIssues(id: any, formData: any) {
-    const getData: any = await patchFunction(`api/issue/${id}`, formData);
-    this.editIssues = getData.payload;
-    console.log("edit issue store", this.editIssues);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await patchFunction(`api/issue/${id}`, formData);
+        this.editIssues = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getEditIssues() {
@@ -271,8 +318,16 @@ export class IssueTrackerStore {
 
   // cancel issue
   async fetchCancelIssues(id: Number) {
-    const getData: any = await deleteFunction(`api/issue/${id}`);
-    this.cancelIssues = getData;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await deleteFunction(`api/issue/${id}`);
+        this.cancelIssues = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getCancelIssues() {
@@ -281,8 +336,16 @@ export class IssueTrackerStore {
 
   //edit comment
   async fetchEditComment(id: any, formData: any) {
-    const getData: any = await patchFunction(`api/comment/${id}`, formData);
-    this.editComment = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await patchFunction(`api/comment/${id}`, formData);
+        this.editComment = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getEditComment() {
@@ -291,8 +354,16 @@ export class IssueTrackerStore {
 
   //delete comment
   async fetchDeleteComment(id: Number) {
-    const getData: any = await deleteFunction(`api/comment/${id}`);
-    this.deleteComment = getData;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await deleteFunction(`api/comment/${id}`);
+        this.deleteComment = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getDeleteComment() {

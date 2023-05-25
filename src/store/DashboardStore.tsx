@@ -75,86 +75,168 @@ export class DashboardStore {
   }
   // Top categories
   async fetchCategories(limit: any) {
-    const getData: any = await fetchFunction(
-      `api/techstack/top?limit=${limit}`
-    );
-    this.categories = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(
+          `api/techstack/top?limit=${limit}`
+        );
+        this.categories = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   get getCategories() {
     return this.categories;
   }
 
   // Recently Added
   async fetchAddedItems() {
-    const getData: any = await fetchFunction("api/component/recent");
-    this.recentlyAddedItems = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction("api/component/recent");
+        this.recentlyAddedItems = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   get getAddedItems() {
     return this.recentlyAddedItems;
   }
 
   //Most Viewed
   async fetchMostViewedData(duration: any) {
-    const getData: any = await fetchFunction(
-      `api/dashboard/mostviewed?duration=${duration}`
-    );
-    this.mostViewedData = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(
+          `api/dashboard/mostviewed?duration=${duration}`
+        );
+        this.mostViewedData = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   get getMostViewedData() {
     return this.mostViewedData;
   }
 
   // Total component
   async fetchComponents() {
-    const getData: any = await fetchFunction("api/dashboard/totalcomponents");
-    this.components = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(
+          "api/dashboard/totalcomponents"
+        );
+        this.components = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   get getComponents() {
     return this.components;
   }
 
   // Total views
   async fetchViews() {
-    const getData: any = await fetchFunction("api/dashboard/views");
-    this.payloadViews = getData;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction("api/dashboard/views");
+        this.payloadViews = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   get getViews() {
     return this.payloadViews;
   }
 
   // Total downloads
   async fetchDownloads() {
-    const getData: any = await fetchFunction("api/dashboard/downloads");
-    this.payloadDownloads = getData;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction("api/dashboard/downloads");
+        this.payloadDownloads = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   get getDownloads() {
     return this.payloadDownloads;
   }
 
   //Leader Board
   async fetchLeaders(duration: any) {
-    const getData: any = await fetchFunction(
-      `api/dashboard/leaderboards?duration=${duration}`
-    );
-    this.leaders = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(
+          `api/dashboard/leaderboards?duration=${duration}`
+        );
+        this.leaders = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   get getLeaders() {
     return this.leaders;
   }
 
   //My Favourites
   async fetchFavourites() {
-    const getData: any = await fetchFunction("api/myfavourites/getList");
-    this.favourites = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction("api/myfavourites/getList");
+        this.favourites = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   get getFavourites() {
     return this.leaders;
   }
 
   //My Pending Items
   async fetchPendingItems() {
-    const getData: any = await fetchFunction("api/dashboard/pendingitems");
-    this.pendingItems = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction("api/dashboard/pendingitems");
+        this.pendingItems = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
   get getPendingItems() {
     return this.pendingItems;
@@ -162,9 +244,20 @@ export class DashboardStore {
 
   //My Contributions
   async fetchContributions() {
-    const getData: any = await fetchFunction("api/dashboard/mycontributions");
-    this.contributions = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(
+          "api/dashboard/mycontributions"
+        );
+        this.contributions = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
+
   get getContributions() {
     return this.contributions;
   }

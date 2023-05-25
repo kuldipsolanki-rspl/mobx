@@ -103,8 +103,16 @@ export class ManageRolesStore {
 
   //fetch role list
   async fetchRoles() {
-    const getData: any = await fetchFunction(`api/role/all`);
-    this.rolesList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/role/all`);
+        this.rolesList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getRoles() {
@@ -113,8 +121,16 @@ export class ManageRolesStore {
 
   //fetch role permission list
   async fetchPermission() {
-    const getData: any = await fetchFunction(`api/permission`);
-    this.permissionList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/permission`);
+        this.permissionList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getPermission() {
@@ -123,9 +139,16 @@ export class ManageRolesStore {
 
   //fetch role permission list
   async fetchViewRoles(id: any) {
-    const getData: any = await fetchFunction(`api/role/${id}`);
-    this.viewRolesList = getData.payload;
-    console.log(this.viewRolesList.permissions);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/role/${id}`);
+        this.viewRolesList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getViewRoles() {
@@ -134,9 +157,16 @@ export class ManageRolesStore {
 
   //delete role
   async fetchDeleteRoles(id: any) {
-    const getData: any = await deleteFunction(`api/role/${id}`);
-    this.deleteRoles = getData;
-    console.log(this.deleteRoles.response.data.status);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await deleteFunction(`api/role/${id}`);
+        this.deleteRoles = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getDeleteRoles() {
@@ -145,8 +175,16 @@ export class ManageRolesStore {
 
   //add edit role
   async fetchAddRoles(id: any, roleData: any) {
-    const getData: any = await patchFunction(`api/role/${id}`, roleData);
-    this.saveAddedRoles = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await patchFunction(`api/role/${id}`, roleData);
+        this.saveAddedRoles = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAddRoles() {
@@ -155,9 +193,16 @@ export class ManageRolesStore {
 
   //add new role
   async fetchAddNewRoles(dataObj: any) {
-    const getData: any = await postFunction(`api/role`, dataObj);
-    this.addNewRoles = getData;
-    console.log(this.addNewRoles.response.data);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await postFunction(`api/role`, dataObj);
+        this.addNewRoles = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAddNewRoles() {

@@ -171,8 +171,16 @@ export class ManageComponentStore {
 
   //tech stack list
   async fetchTechstacks() {
-    const getData: any = await fetchFunction("api/techstack/list");
-    this.techStacks = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction("api/techstack/list");
+        this.techStacks = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getTechstacks() {
@@ -181,8 +189,16 @@ export class ManageComponentStore {
 
   //admin tag list
   async fetchAdminTagList() {
-    const getData: any = await fetchFunction("api/tag/list");
-    this.adminTagList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction("api/tag/list");
+        this.adminTagList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAdminTagList() {
@@ -191,11 +207,19 @@ export class ManageComponentStore {
 
   //manage component post
   async fetchManageComponents(dataObj: any) {
-    const getData: any = await postFunction(
-      `api/component/managecomponent`,
-      dataObj
-    );
-    this.manageComponentList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await postFunction(
+          `api/component/managecomponent`,
+          dataObj
+        );
+        this.manageComponentList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getManageComponents() {
@@ -204,8 +228,18 @@ export class ManageComponentStore {
 
   //manage filtered data
   async fetchManageFilteredData() {
-    const getData: any = await fetchFunction(`api/component/managefilterdata`);
-    this.manageFilteredList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(
+          `api/component/managefilterdata`
+        );
+        this.manageFilteredList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getManageFilteredData() {
@@ -214,8 +248,16 @@ export class ManageComponentStore {
 
   //admin sync techstack
   async fetchAdminSyncTechstack() {
-    const getData: any = await fetchFunction(`api/gitlab/sync/techstacks`);
-    this.adminSyncTechstack = getData;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/gitlab/sync/techstacks`);
+        this.adminSyncTechstack = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAdminSyncTechstack() {
@@ -224,8 +266,16 @@ export class ManageComponentStore {
 
   //admin sync components
   async fetchAdminSyncComponents() {
-    const getData: any = await fetchFunction(`api/gitlab/sync/components`);
-    this.adminSyncComponents = getData;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/gitlab/sync/components`);
+        this.adminSyncComponents = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAdminSyncComponents() {
@@ -234,8 +284,16 @@ export class ManageComponentStore {
 
   //admin sync files
   async fetchAdminSyncFiles() {
-    const getData: any = await fetchFunction(`api/gitlab/sync/files`);
-    this.adminSyncFiles = getData;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(`api/gitlab/sync/files`);
+        this.adminSyncFiles = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAdminSyncFiles() {
@@ -244,8 +302,18 @@ export class ManageComponentStore {
 
   //admin edit manage component
   async fetchAdminEditManageComponent(compId: any) {
-    const getData: any = await fetchFunction(`api/component/view?id=${compId}`);
-    this.adminEditManageComponent = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(
+          `api/component/view?id=${compId}`
+        );
+        this.adminEditManageComponent = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAdminEditManageComponent() {
@@ -254,11 +322,19 @@ export class ManageComponentStore {
 
   //admin save manage component
   async fetchAdminEditSaveComponent(compId: any, dataObj: any) {
-    const getData: any = await postFunction(
-      `api/component/edit?id=${compId}`,
-      dataObj
-    );
-    this.adminEditSaveComponent = getData;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await postFunction(
+          `api/component/edit?id=${compId}`,
+          dataObj
+        );
+        this.adminEditSaveComponent = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAdminEditSaveComponent() {
@@ -267,12 +343,19 @@ export class ManageComponentStore {
 
   //admin publish manage component
   async fetchAdminEditPublishComponent(Obj: any, formdata: any) {
-    const getData: any = await postFunction(
-      `api/component/publish?id=${Obj.id}&publish=${Obj.publishFlag}`,
-      formdata
-    );
-    this.adminEditPublishComponent = getData;
-    console.log(getData.payload);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await postFunction(
+          `api/component/publish?id=${Obj.id}&publish=${Obj.publishFlag}`,
+          formdata
+        );
+        this.adminEditPublishComponent = getData;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getAdminEditPublishComponent() {

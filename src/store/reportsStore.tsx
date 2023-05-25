@@ -43,10 +43,18 @@ export class ReportsStore {
 
   //get report
   async fetchReports(id: any) {
-    const getData: any = await fetchFunction(
-      `api/techstack/component/report?techstackid=${id}`
-    );
-    this.reportsList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(
+          `api/techstack/component/report?techstackid=${id}`
+        );
+        this.reportsList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getReports() {
@@ -55,10 +63,18 @@ export class ReportsStore {
 
   //get trendComponent
   async fetchTrendComponent(id: any, duration: any) {
-    const getData: any = await fetchFunction(
-      `api/techstack/component/trend/report?techstackid=${id}&duration=${duration}`
-    );
-    this.trendComponentList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(
+          `api/techstack/component/trend/report?techstackid=${id}&duration=${duration}`
+        );
+        this.trendComponentList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getTrendComponent() {
@@ -67,10 +83,18 @@ export class ReportsStore {
 
   //get techStackGetReport
   async fetchTechStackApprovalReport() {
-    const getData: any = await fetchFunction(
-      `api/techstack/component/approval/report`
-    );
-    this.techStackApprovalReportList = getData.payload;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const getData: any = await fetchFunction(
+          `api/techstack/component/approval/report`
+        );
+        this.techStackApprovalReportList = getData.payload;
+        return resolve(getData);
+      } catch (error) {
+        console.error(error);
+        return resolve([]);
+      }
+    });
   }
 
   get getTechStackApprovalReport() {
